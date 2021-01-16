@@ -146,12 +146,12 @@ function themeConfig($form) {
 			</label>
 		</li>
 		<li>
-			<p class="description" id="update-dec">
-				正在检查更新_(:Dゝ∠)_
+			<p>
+				<span class="description" id="update-dec" title="_(:зゝ∠)_这里没有彩蛋" class="badge badge-pill badge-success"><i class="fa fa-terminal" aria-hidden="true"></i>正在检测新版本</span>
 			</p>
 		</li>
 		<li hidden id="update-btn-li">
-			<button type="button" class="btn default" id="update-btn">
+			<button type="button" class="btn primary" id="update-btn">
 			</button>
 		</li>
 	</ul>
@@ -163,7 +163,7 @@ function themeConfig($form) {
 		success: function(data) {
 			var releaseVersion = data["version"]
 			$("#update-btn-li").show()
-			$("#update-dec").html("")
+			$("#update-dec").html("检测到新版本_(:Dゝ∠)_")
 
 			$("#update-btn").html("最新版本为" + releaseVersion + "，当前版本为" + version + "，" + (toNum(releaseVersion) > toNum(version) ? "你正在使用旧版本主题。点击更新" : "你已更新至最新版本"));
 			if (toNum(releaseVersion) > toNum(version)) {
