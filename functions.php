@@ -157,7 +157,7 @@ function themeConfig($form) {
 	</ul>
 	<script>
 		$.ajax({
-		url: "https://data.jsdelivr.com/v1/package/resolve/gh/trinitrotofu/Cocowolf",
+		url: "https://data.jsdelivr.com/v1/package/resolve/gh/ashrain-h/Cocowolf",
 		dataType: "json",
 		timeout: 30000,
 		success: function(data) {
