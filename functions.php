@@ -164,8 +164,7 @@ function themeConfig($form) {
 			var releaseVersion = data["version"]
 			$("#update-btn-li").show()
 			$("#update-dec").html("检测到新版本_(:Dゝ∠)_")
-
-			$("#update-btn").html("最新版本为" + releaseVersion + "，当前版本为" + version + "，" + (toNum(releaseVersion) > toNum(version) ? "你正在使用旧版本主题。点击更新" : "你已更新至最新版本"));
+			$("#update-btn").html("最新版本为" + releaseVersion + "，当前版本为" + version + "，" + (toNum(releaseVersion) > toNum(version) ? "你正在使用旧版本主题。点击更新" :  "你已更新至最新版本") +  (toNum(releaseVersion) < toNum(version) ? "...好家伙，比我版本都新" :  ""));
 			if (toNum(releaseVersion) > toNum(version)) {
 				$("#update-btn").click(function() {
 					window.location.href = "themeupdater.php"
