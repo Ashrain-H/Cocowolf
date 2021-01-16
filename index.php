@@ -4,7 +4,7 @@
  * 
  * @package Cocowolf
  * @author 大以巴狼艾斯
- * @version 1.0
+ * @version 1.0.2
  * @link https://github.com/Ashrain-H/Cocowolf
  */
 
