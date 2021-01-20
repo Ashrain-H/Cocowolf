@@ -59,7 +59,16 @@
 					</div>
 				</div>
 				<div class="col-md-6">
+				    <div class="alert alert-success" role="alert"><span class="alert-inner--icon"><i class="fa fa-calendar-check-o" aria-hidden="true"></i></span><span style="text-align:center" id="runtime_text">初始化计时器中_(:зゝ∠)_</span></div>
 					<ul class="nav nav-footer justify-content-end">
+					    
+<script type="text/javascript">function show_runtime(){window.setTimeout("show_runtime()",1000);X=new 
+Date("1/14/2021 11:36:00");
+Y=new Date();T=(Y.getTime()-X.getTime());M=24*60*60*1000;
+a=T/M;A=Math.floor(a);b=(a-A)*24;B=Math.floor(b);c=(b-B)*60;C=Math.floor((b-B)*60);D=Math.floor((c-C)*60);
+runtime_text.innerHTML="獸来也！已正常运行了"+A+"天"+B+"个小时"+C+"分"+D+"秒"}show_runtime();
+
+</script>
 						<li class="nav-item">
 							<a class="nav-link" href="<?php $this->options->siteUrl(); ?>">首页</a>
 						</li>

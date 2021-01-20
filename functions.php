@@ -104,7 +104,6 @@ function themeConfig($form) {
 						fwrite($fileobj, $filecontent);
 						fclose($fileobj);
 					}
-					
 					echo "主题更新成功！即将返回主题页面。";
 					echo \'<meta http-equiv="refresh" content="3;url=themes.php">\';
 					@unlink ("themeupdater.php");  
@@ -163,7 +162,7 @@ function themeConfig($form) {
 		success: function(data) {
 			var releaseVersion = data["version"]
 			$("#update-btn-li").show()
-			$("#update-dec").html("检测到新版本_(:Dゝ∠)_")
+			$("#update-dec").html("检测到新版本_(:Dゝ∠)_点击按钮更新")
 			$("#update-btn").html("最新版本为" + releaseVersion + "，当前版本为" + version + "，" + (toNum(releaseVersion) > toNum(version) ? "你正在使用旧版本主题。点击更新" :  "你已更新至最新版本") +  (toNum(releaseVersion) < toNum(version) ? "...好家伙，比我版本都新" :  ""));
 			if (toNum(releaseVersion) > toNum(version)) {
 				$("#update-btn").click(function() {
@@ -172,10 +171,62 @@ function themeConfig($form) {
 			}
 		},
 		error: function() {
-			$("#update-dec").html("检查更新程序出错_(xзゝ∠)_")
+			$("#update-dec").html("检查更新程序出错_(xзゝ∠)_主题文件可能存在损坏");
 		}
 	});
 	</script>';
+	echo '
+	<ul class="typecho-option typecho-option-submit">
+		<li>
+			<label class="typecho-label">
+				设置用户称号
+			</label>
+		</li>
+		<li>
+			<p>
+				<span class="description" title="_(:зゝ∠)_这里没有彩蛋" class="badge badge-pill badge-success">输入用户名和要设置的称号来设置用户称号</span>
+			</p>
+			<p>
+				<input style="width: 150px" id="lorename" name="subtitle" type="text" class="text" placeholder="请输入目标用户名">
+				<input style="width: 150px;margin-left: 15px;" id="loreuser" name="subtitle" type="text" class="text" placeholder="请输入要设置的称号">
+				<button style="margin-left: 15px;" type="button" class="btn primary" id="changelore">修改称号</button>
+				<button style="margin-left: 15px;" type="button" class="btn primary" id="removelore">删除称号</button>
+			</p>
+		</li>
+		<li hidden id="statusli">
+			<p id="statusinfo"></p>
+		</li>
+	</ul>
+	<script>
+	$("#changelore").click(function() {
+	    var lorename = $("#lorename").val();
+	    var loreuser = $("#loreuser").val();
+		$.ajax({
+		    type : "POST",
+		    url: "/usr/plugins/CocowolfLore/Plugin.php?apitoken='.__TYPECHO_LORE_API_TOKEN__.'&action=changelore",
+		    data: {
+		        lname: lorename,
+		        luser: loreuser
+		    },
+		    async:true,
+		    success: function(rdata) {
+		    	var status = rdata["status"]
+		    	if(status==true){
+		    	    $("#statusli").show();
+		    	    $("#statusinfo").html("<font color=\"green\">"+rdata["message"]+"</font>");
+		    	} else {
+		    	    $("#statusli").show();
+		    	    $("#statusinfo").html("<font color=\"red\">"+rdata["message"]+"</font>");
+		    	}
+		    },
+		    error: function() {
+		        $("#statusli").show();
+		    	$("#statusinfo").html("<font color=\"red\">更新用户信息失败（无法连接到目标服务器）</font>");
+		    }
+	    })
+	});
+	</script>
+	';
 	$subtitle = new Typecho_Widget_Helper_Form_Element_Text('subtitle', NULL, '', _t('站点副标题'), _t('在这里填入站点副标题'));
 	$form->addInput($subtitle);
 	$logoUrl = new Typecho_Widget_Helper_Form_Element_Text('logoUrl', NULL, '', _t('站点 LOGO 地址'), _t('在这里填入一个图片 URL'));
@@ -198,8 +249,10 @@ function themeConfig($form) {
 	$form->addInput($Pjax);
 	$pjaxcomp = new Typecho_Widget_Helper_Form_Element_Textarea('pjaxcomp', NULL, '', _t('pjax 回调代码'), _t('在这里填入 pjax 渲染完毕后需执行的 JS 代码'));
 	$form->addInput($pjaxcomp);
-	$katex = new Typecho_Widget_Helper_Form_Element_Radio('katex', array('0' => _t('关闭'), '1' => _t('打开')), '0', _t('开启 katex 数学公式渲染'), _t('选择是否启用 katex 数学公式渲染'));
+	$katex = new Typecho_Widget_Helper_Form_Element_Radio('katex', array('0' => _t('关闭'), '1' => _t('打开')), '0', _t('开启 katex 数学公式渲染'), _t('是否启用 katex 数学公式渲染'));
 	$form->addInput($katex);
+	$anim = new Typecho_Widget_Helper_Form_Element_Radio('anim', array('0' => _t('关闭'), '1' => _t('打开')), '0', _t('开启 Animate 动画渲染'), _t('是否启用增强动画<br>对渲染性能较差的浏览器请关闭'));
+	$form->addInput($anim);
 	$prismjs = new Typecho_Widget_Helper_Form_Element_Radio('prismjs', array('0' => _t('关闭'), '1' => _t('打开')), '0', _t('开启 prism.js 代码高亮'), _t('选择是否启用 prism.js 代码高亮'));
 	$form->addInput($prismjs);
 	$prismLine = new Typecho_Widget_Helper_Form_Element_Radio('prismLine', array('0' => _t('关闭'), '1' => _t('打开')), '0', _t('开启 prism.js 行号显示'), _t('选择是否显示 prism.js 代码高亮左侧行号'));
@@ -228,6 +281,12 @@ function themeConfig($form) {
 		),
 		'0', _t('默认 TOC 目录展开状态'), _t('选择打开文章时 TOC 目录的展开状态'));
 	$form->addInput($toc_enable);
+	$counts = new Typecho_Widget_Helper_Form_Element_Radio('counts',
+		array('0' => _t('关闭'),
+			'1' => _t('开启'),
+		),
+		'1', _t('文章计数功能'), _t('这种症状持续多久了?'));
+	$form->addInput($counts);
 }
 
 function printCategory($that, $icon = 0) { ?>
@@ -252,16 +311,17 @@ function printTag($that, $icon = 0) { ?>
 	</span>
 <?php }
 
-function printAricle($that, $flag) { ?>
+function printAricle($that, $flag, $counts) { ?>
 	<div class="card shadow content-card list-card <?php if ($flag): ?>content-card-head<?php endif; ?>">
 		<section class="section">
-			<div class="container">
+			<div class="container animate__animated animate__fadeInUpBig">
 				<div class="content">
 					<h1><a class="text-default" href="<?php $that->permalink() ?>"><?php $that->title() ?></a></h1>
 					<div class="list-object">
 						<span class="list-tag"><i class="fa fa-calendar-o" aria-hidden="true"></i> <time datetime="<?php $that->date('c'); ?>"><?php $that->date();?></time></span>
 						<span class="list-tag"><i class="fa fa-comments-o" aria-hidden="true"></i> <?php $that->commentsNum('%d');?> 条评论</span>
-						<?php printCategory($that, 1); ?>
+						<?php word_count($that->cid,$counts); ?>
+					<!--php printCategory($that, 1); ?>-->
 						<?php printTag($that, 1); ?>
 						<span class="list-tag"><i class="fa fa-user-o" aria-hidden="true"></i> <a class="badge badge-warning badge-pill" href="<?php $that->author->permalink(); ?>"><?php $that->author();?></a></span>
 					</div>
@@ -423,4 +483,34 @@ function getUserQQAvater($email) {
     } else {
         echo '/usr/themes/Cocowolf/images/avatar.png';
     }
+}
+
+function getUserLore($userid) {
+    $user_db = Typecho_Db::get(); 
+    $username = $user_db->fetchRow($user_db->select('name')->from('table.users')->where('uid = ?', $userid));
+    $c_lusername = Typecho_Widget::widget('Widget_Options')->plugin('CocowolfLore')->lusername;
+    $c_lorename = Typecho_Widget::widget('Widget_Options')->plugin('CocowolfLore')->lorename;
+    $p_username = explode(',',$c_lusername);
+    $p_lorename = explode(',',$c_lorename);
+    for($i=0;$i<count($p_username);){
+        if ($p_username[$i]==$username['name'] && $p_lorename[$i]!="0") {
+            echo('<span id="badge" title="獸来也！专属荣誉称号.
+岁月会冲淡回忆,但每一瞬的美好我们都一起记得.
+颁发给为大家带来欢乐的小动物,以及人类." class="badge badge-pill badge-lore"><i class="fa fa-paw" style="width: 15px;height: 15px;position: relative;" aria-hidden="true"></i> '.$p_lorename[$i].'</span>');
+            break;
+        }
+        $i++;
+    }
+}
+
+function  word_count ($cid,$counts){
+    if ($counts){
+        $db=Typecho_Db::get ();
+        $wc=$db->fetchRow ($db->select ('table.contents.text')->from ('table.contents')->where ('table.contents.cid=?',$cid)->order ('table.contents.cid',Typecho_Db::SORT_ASC)->limit (1));
+        $text = preg_replace("/[^\x{4e00}-\x{9fa5}]/u", "", $wc['text']);
+    _e('<span class="list-tag">共');
+    _e(mb_strlen($text,'UTF-8'));
+    _e('字</span>');
+    }
+	else{}
 }

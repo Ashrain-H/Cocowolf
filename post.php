@@ -2,7 +2,12 @@
 	if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 	$this->need('header.php');
 ?>
-
+<style>
+    .badge-lore {
+        color:#fff!important;
+    background-color: #ff5200!important;
+}
+</style>
 	<main>
 
 		<?php if($this->options->toc): ?>
@@ -67,7 +72,7 @@
 						<h1 class="text-white"><?php $this->title() ?></h1>
 					</div>
 					<div class="row align-items-center justify-content-center">
-						<h5 class="text-white">于 <time datetime="<?php $this->date('c'); ?>"><?php $this->date(); ?></time> 由 <?php $this->author(); ?> 发布</h5>
+						<h5 class="text-white">于 <time datetime="<?php $this->date('c'); ?>"><?php $this->date(); ?></time> 由  <?php getUserLore($this->authorId); ?> <?php $this->author(); ?> 发布</h5>
 					</div>
 				</div>
 			</div>

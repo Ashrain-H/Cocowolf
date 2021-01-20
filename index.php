@@ -4,7 +4,7 @@
  * 
  * @package Cocowolf
  * @author 大以巴狼艾斯
- * @version 1.0.2
+ * @version 1.0.0
  * @link https://github.com/Ashrain-H/Cocowolf
  */
 
@@ -42,7 +42,7 @@
 				<!-- Article list -->
 				<?php $first_flag = true; ?>
 				<?php while($this->next()): ?>
-					<?php printAricle($this, $first_flag); $first_flag = false; ?>
+					<?php printAricle($this, $first_flag, $this->options->counts); $first_flag = false; ?>
 				<?php endwhile; ?>
 				<!-- Toggle page -->
 				<?php printToggleButton($this); ?>

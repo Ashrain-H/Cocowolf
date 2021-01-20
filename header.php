@@ -48,7 +48,11 @@
 	<?php if ($this->options->katex): ?>
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
 	<?php endif; ?>
-
+	
+	<!-- Animate CSS -->
+	<?php if ($this->options->anim): ?>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/ashrain-h/CDN@master/css/Animate.min.css">
+	<?php endif; ?>
 	<!-- PrismJS CSS -->
 	<?php if ($this->options->prismjs): ?>
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/prismjs@1.20.0/themes/<?php $this->options->prismTheme(); ?>.css" />
@@ -63,6 +67,9 @@
 	
 	<!-- Jquery -->
 	<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+	
+	<!-- 验证码 -->
+	<script src="https://v.vaptcha.com/v3.js"></script>
 
 	<!-- Custom CSS -->
 	<?php if ($this->options->customCss): ?>

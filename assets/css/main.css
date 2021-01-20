@@ -5215,11 +5215,23 @@ input[type='button'].btn-block {
     background-color: rgba(147, 231, 195, .5);
 }
 
-.badge-success[href]:hover,
-.badge-success[href]:focus {
+.badge-success:hover,
+.badge-success:focus {
     text-decoration: none;
     color: #fff;
     background-color: #24a46d;
+}
+
+.badge-lore {
+    color: #ff5200;
+    background-color: rgba(255, 119, 47, 0.13);
+}
+
+.badge-lore:hover,
+.badge-lore:focus {
+    text-decoration: none;
+    color: #fff;
+    background-color: #ff5200;
 }
 
 .badge-info {
@@ -5284,7 +5296,7 @@ input[type='button'].btn-block {
 
 .badge-default {
     color: #ce7336;
-    background-color: rgba(132, 175, 52, 0.5);
+    background-color: rgb(132, 175, 52);
 }
 
 .badge-default[href]:hover,

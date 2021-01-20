@@ -1,7 +1,7 @@
 <?php function threadedComments($comments, $options) {
 		$commentLevelClass = $comments->_levels > 0 ? ' comment-child' : ' comment-parent';
 ?>
- 
+
 <li id="li-<?php $comments->theId(); ?>">
 	<div id="<?php $comments->theId(); ?>">
 		<div  class="comment-item">
@@ -18,10 +18,19 @@
 				<div class="comment-head">
 					<img style="cursor: none;max-width: none;display: flex;margin: 0;margin-top: -10px;align-self: center;border-radius: unset;vertical-align: unset;border-style: none;position: absolute;border-radius:50%;" src="<?php getUserQQAvater($comments->mail) ?>" height="40" width="40" /><h5 style="margin-left: 50px;"><?php $comments->author(); ?> · <small><?php $comments->date('Y-m-d H:i'); ?></small><?php
 					if ($comments->authorId) {
-						if ($comments->authorId == $comments->ownerId){
-							_e(' <span title="獸来也！站点管理员_(:зゝ∠)_" 
+						$user_db = Typecho_Db::get(); 
+					    $is_admin = $user_db->fetchRow($user_db->select('group')->from('table.users')->where('uid = ?', $comments->authorId));
+						if ($is_admin['group'] == "administrator"){
+							_e(' <span id="badge" title="獸来也！站点管理员_(:>ゝ∠)_
+这个站点的大部分内容都要感谢秩乱的说
+顺便,这些标签真的很Q弹哦owo"
 							class="badge badge-pill badge-success"><i class="fa fa-terminal" aria-hidden="true"></i>站点管理员</span>');
-						}
+						}elseif($is_admin['group'] == "editor"){
+						    _e(' <span id="badge" title="可爱又迷人的獸来也！站点编辑_(:Dゝ∠)_"
+							class="badge badge-pill badge-success"><i class="fa fa-calendar-check-o" aria-hidden="true"></i>站点编辑</span>');
+						}else{}
+						
+						getUserLore($comments->authorId);
 					}
 					?></h5>
 				</div>
@@ -60,12 +69,43 @@
 				$pg_this = new stdClass();
                 $pg_this->_db = Typecho_Db::get();
                 $username=$this->user->screenName;
+                $options = Typecho_Widget::widget('Widget_Options')->plugin('VAPTCHA');
 				$row = $pg_this->_db->fetchRow($pg_this->_db->select('validate_state')->from('table.users')->where('screenName = ?', $username));
 				if($row['validate_state']==="2"){
 				    $checked=true;
 				} else {
 				    $checked=false;
 				}
+				$vaptcha_js = "
+                    <script>
+                        document.getElementById(\"add-comment-button\").setAttribute(\"disabled\", true);
+                        
+                         vaptcha({
+                            vid: '".$options->vid."',
+                            type: 'click', 
+                            https: '".$options->https_enforce."',
+                            container: '#vaptchaContainer',
+                            scene: 2, 
+                            offline_server: '".$options->offline_svr."',
+                        })
+                        .then(function (obj) {
+                            obj.listen('pass', function () {
+                                var token = obj.getToken()
+                                
+                                document.getElementsByClassName(\"vp-tip\").innerHTML +=',你是人类/小动物';
+                                $.post('/vaptcha.php', { token, scene: 2 }, function (r) {
+                                    if (r.success) {
+                                    document.getElementById(\"add-comment-button\").removeAttribute(\"disabled\");
+                                    } else {
+                                        $('.alert').html(r.msg)
+                                        obj.reset()
+                                    }
+                                }, 'json')
+                            })
+                            obj.render()
+                        })
+                    </script>
+                ";
 				?>
 				<?php if($checked==true):?>
 				<div id="<?php $this->respondId(); ?>" class="comment-reply">
@@ -116,12 +156,21 @@
 						<p>
 							<textarea rows="8" cols="50" name="text" id="textarea" class="form-control" required ><?php $this->remember('text'); ?></textarea>
 						</p>
-						<p>
-						<?php spam_protection_math();?>
-							<button type="submit" class="btn btn-outline-success" id="add-comment-button" style="float: right;"><?php _e('提交评论'); ?></button>
-						</p>
+						<div style="display: flex; flex-direction: column;align-items:end;">
+						<div id="vaptchaContainer" style="display:flex; float:right; width: 300px;height: 36px;">
+						    <div class="vaptcha-init-main">
+						        <div class="vaptcha-init-loading">
+						            <a href="/" target="_blank">
+						                <img src="https://r.vaptcha.net/public/img/vaptcha-loading.gif" />
+						                </a>
+						                <span class="vaptcha-text">_(:зゝ∠)_灵魂画手已上线</span>
+						                </div>
+						                </div>
+						                </div>
+							<button type="submit" class="btn btn-outline-success" id="add-comment-button" style="display:flex; float: right;"><?php _e('提交评论'); ?></button></div>
 					</form>
 				</div>
+				<?php echo $vaptcha_js; ?>
 				<?php else: ?>
 				<div class="row align-items-center justify-content-center"><h3 id="response"><h3 style="margin-bottom: 50px;">您必须验证邮箱才能发表评论<br><a href="/member.php">点击此处</a></a> 进入后台，验证邮箱。</h3></div>
 				<?php endif; ?>
@@ -299,5 +348,14 @@
         }
     };
 })();
+</script>
+<script type="text/javascript">
+$("span[id^='badge']").hover(function () {
+if ($(this).hasClass("animate__animated animate__rubberBand")) {
+$(this).removeClass("animate__animated animate__rubberBand")
+} else{
+$(this).addClass("animate__animated animate__rubberBand")
+}
+})
 </script>
 <?php endif; ?>
